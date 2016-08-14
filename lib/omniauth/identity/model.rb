@@ -52,7 +52,7 @@ module OmniAuth
         raise NotImplementedError
       end
 
-      SCHEMA_ATTRIBUTES = %w(name email nickname first_name last_name location description image phone)
+      SCHEMA_ATTRIBUTES = %w(username mobile open_id name email nickname first_name last_name location description image phone)
       # A hash of as much of the standard OmniAuth schema as is stored
       # in this particular model. By default, this will call instance
       # methods for each of the attributes it needs in turn, ignoring
@@ -75,11 +75,17 @@ module OmniAuth
       #
       # @return [String] An identifier string unique to this identity.
       def uid
-        if respond_to?('id')
+        if respond_to?('open_id')
+          return nil if self.open_id.nil?
+          self.open_id.to_s
+        elsif respond_to?('num')
+          return nil if self.num.nil?
+          self.num.to_s
+        elsif respond_to?('id')
           return nil if self.id.nil?
           self.id.to_s
         else
-          raise NotImplementedError 
+          raise NotImplementedError
         end
       end
 
